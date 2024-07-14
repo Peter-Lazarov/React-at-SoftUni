@@ -1,15 +1,18 @@
+import Spinner from "../../spinner/Spinner"
 import UserTableRow from "./user-table-row/UserTableRow"
 
 export default function UserTable({
-    users
+    users,
+    isLoading,
+    onUserDetailsClick,
+    onUserDeleteClick
 }) {
     return (
         <>
             <div className="table-wrapper">
-                {/* <div className="loading-shade">
-                    <div className="spinner"></div>
-
-                    No users added yet
+                <div className="loading-shade">
+                    {isLoading && <Spinner />}
+                    {/* No users added yet
 
                     <div className="table-overlap">
                         <svg
@@ -66,8 +69,8 @@ export default function UserTable({
                             ></path>
                         </svg>
                         <h2>Failed to fetch</h2>
-                    </div>
-                </div> */}
+                    </div> */}
+                </div>
 
                 <table className="table">
                     <thead>
@@ -125,7 +128,13 @@ export default function UserTable({
                         </tr>
                     </thead>
                     <tbody>
-                        {users.map(user => <UserTableRow key = {user._id} user = {user}/>)}
+                        {users.map(user =>
+                            <UserTableRow
+                                key={user._id}
+                                user={user}
+                                onUserDetailsClick={onUserDetailsClick}
+                                onUserDeleteClick={onUserDeleteClick}
+                            />)}
                     </tbody>
                 </table>
             </div>
