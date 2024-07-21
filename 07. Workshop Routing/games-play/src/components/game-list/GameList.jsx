@@ -1,38 +1,26 @@
+import { useEffect, useState } from "react"
+import { getAllGames } from "../../services/games-api";
+import GameListItem from "./game-list-item.jsx/GameListItem";
+
 export default function () {
+    const [games, setGames] = useState([]);
+
+    useEffect(() => {
+        (async () => {
+            const gamesAll = await getAllGames();
+            setGames(gamesAll);
+            //console.log(gamesAll);
+        })();
+    }, []);
+
     return (
         <>
             <section id="catalog-page">
                 <h1>All Games</h1>
-                {/* <!-- Display div: with information about every game (if any) --> */}
-                <div className="allGames">
-                    <div className="allGames-info">
-                        <img src="./images/avatar-1.jpg" />
-                        <h6>Action</h6>
-                        <h2>Cover Fire</h2>
-                        <a href="#" className="details-button">Details</a>
-                    </div>
-
-                </div>
-                <div className="allGames">
-                    <div className="allGames-info">
-                        <img src="./images/avatar-1.jpg" />
-                        <h6>Action</h6>
-                        <h2>Zombie lang</h2>
-                        <a href="#" className="details-button">Details</a>
-                    </div>
-
-                </div>
-                <div className="allGames">
-                    <div className="allGames-info">
-                        <img src="./images/avatar-1.jpg" />
-                        <h6>Action</h6>
-                        <h2>MineCraft</h2>
-                        <a href="#" className="details-button">Details</a>
-                    </div>
-                </div>
-
-                {/* <!-- Display paragraph: If there is no games  --> */}
-                <h3 className="no-articles">No articles yet</h3>
+                {games.length > 0
+                    ? games.map(game => <GameListItem _id={game._id} title={game.title} category={game.category} imageUrl={game.imageUrl} key={game._id}/>)
+                    : <h3 className="no-articles">No games yet</h3>
+                }
             </section>
         </>
     )
