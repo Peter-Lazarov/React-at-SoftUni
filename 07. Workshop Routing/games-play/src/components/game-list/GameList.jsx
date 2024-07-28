@@ -1,17 +1,9 @@
-import { useEffect, useState } from "react"
-import { getAllGames } from "../../services/games-api";
-import GameListItem from "./game-list-item.jsx/GameListItem";
+
+import GameListItem from "./game-list-item/GameListItem";
+import { useAllGames } from "../../hooks/useGames";
 
 export default function () {
-    const [games, setGames] = useState([]);
-
-    useEffect(() => {
-        (async () => {
-            const gamesAll = await getAllGames();
-            setGames(gamesAll);
-            //console.log(gamesAll);
-        })();
-    }, []);
+    const [games, setGames] = useAllGames();
 
     return (
         <>
