@@ -1,8 +1,22 @@
+import { getAccessToken } from "../utilities/authenticationUtility";
+
 async function get(url){
     const options = {};
     options.method = 'GET';
 
+    //const accessToken = localStorage.getItem('accessToken');
+    const accessToken = getAccessToken();
+
+    if(accessToken){
+        options.headers = {};
+        options.headers['X-Authorization'] = accessToken;
+    }
+
     const response = await fetch(url, options);
+    if (response.status == 204) {
+        return;
+    }
+
     const result = response.json();
     
     return result;
@@ -16,7 +30,9 @@ async function post(url, data){
         'Content-Type': 'application/json'
     };
 
-    const accessToken = localStorage.getItem('accessToken');
+    //const accessToken = localStorage.getItem('accessToken');
+    const accessToken = getAccessToken();
+    
     if(accessToken){
         options.headers['X-Authorization'] = accessToken;
     }
