@@ -24,7 +24,6 @@ export default function usePersistedState(key, initialState) {
 
         if (newState == null || Object.keys(newState).length === 0) {
             localStorage.removeItem(key);
-
         }else {
             localStorage.setItem(key, JSON.stringify(newState));
         }

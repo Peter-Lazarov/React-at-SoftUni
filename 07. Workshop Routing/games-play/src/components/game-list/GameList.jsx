@@ -10,7 +10,12 @@ export default function () {
             <section id="catalog-page">
                 <h1>All Games</h1>
                 {games.length > 0
-                    ? games.map(game => <GameListItem _id={game._id} title={game.title} category={game.category} imageUrl={game.imageUrl} key={game._id}/>)
+                    ? games.map(game => <GameListItem 
+                        _id={game._id} 
+                        title={game.title} 
+                        category={game.category} 
+                        imageUrl={game.imageUrl} 
+                        key={game._id}/>)
                     : <h3 className="no-articles">No games yet</h3>
                 }
             </section>
