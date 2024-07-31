@@ -6,11 +6,29 @@ async function get(url){
 
     //const accessToken = localStorage.getItem('accessToken');
     const accessToken = getAccessToken();
+    //console.log('accessToken ' + accessToken);
 
     if(accessToken){
         options.headers = {};
         options.headers['X-Authorization'] = accessToken;
     }
+    
+    //console.log('options');
+    //console.log(options);
+
+    const response = await fetch(url, options);
+    if (response.status == 204) {
+        return;
+    }
+
+    const result = response.json();
+    
+    return result;
+}
+
+async function getUnauthorised(url){
+    const options = {};
+    options.method = 'GET';
 
     const response = await fetch(url, options);
     if (response.status == 204) {
@@ -53,5 +71,6 @@ async function post(url, data){
 
 export default {
     get,
-    post
+    post,
+    getUnauthorised
 };

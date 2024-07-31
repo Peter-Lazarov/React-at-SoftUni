@@ -4,7 +4,7 @@ const games_url = 'http://localhost:3030/jsonstore/games';
 //const games_url = 'http://localhost:3030/data/games';
 
 export const getAllGames = async () => {
-    const resultAsJSON = await requests.get(games_url);
+    const resultAsJSON = await requests.getUnauthorised(games_url);
     //console.log(resultAsJSON);
     const resultAsValues = Object.values(resultAsJSON);
     //console.log(resultAsValues);

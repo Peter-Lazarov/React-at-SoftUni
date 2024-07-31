@@ -29,8 +29,8 @@ export function AuthenticationContextProvider(props) {
     };
 
     let contextData = {};
-    console.log(authenticationState);
-
+    //console.log(authenticationState);
+    
     if(authenticationState != null && authenticationState != {}){
         contextData = {
             userId: authenticationState._id,

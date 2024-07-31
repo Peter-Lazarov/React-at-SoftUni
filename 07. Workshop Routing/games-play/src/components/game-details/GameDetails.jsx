@@ -1,44 +1,46 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { getOneGame } from "../../services/games-api";
-import { create } from "../../services/comments-api";
+import { useOneGame } from "../../hooks/useGames";
+import useForm from "../../hooks/useForm";
+import { useCreateComment, useGetAllComments } from "../../hooks/useComments";
+
+import { useAuthenticationContext } from "../../contexts/AuthenticationContext";
+
+const initialValues = {
+    comment: ''
+}
 
 export default function GameDetails() {
-    const [game, setGame] = useState({});
-    const [username, setUsername] = useState('');
-    const [comment, setComment] = useState('');
+    //const [loading, setLoading] = useState(false);
+
     const { gameId } = useParams();
-    const [loading, setLoading] = useState(true);
+    const [game] = useOneGame(gameId);
+    const [comments, setComments] = useGetAllComments(gameId);
+    const createComment = useCreateComment();
+    const { isAuthenticated } = useAuthenticationContext();
 
-    useEffect(() => {
-        (async () => {
-            const gameCurrent = await getOneGame(gameId);
-            setGame(gameCurrent);
-            setLoading(false);
-        })();
-    }, []);
+    const {
+        changeHandler,
+        submitHandler,
+        formValues
+    } = useForm(initialValues, async ({ comment }) => {
 
-    const commentSubmitHandler = async (event) => {
-        event.preventDefault();
-
-        const newComment = await create(gameId, username, comment);
-
-        setGame(previousState => ({
-            ...previousState,
-            comments: {
-                ...previousState.comments,
-                [newComment._id]: newComment
+        try {
+            const newComment = await createComment(gameId, comment);
+            if (comments != undefined && comments != null) {
+                const commentId = `comment${Object.keys(comments).length + 1}`;
+                setComments({ ...comments, [commentId]: newComment });
+            } else {
+                setComments({ ...comments, newComment });
             }
-        }))
+        } catch (error) {
+            console.log(error.message);
+        }
+    });
 
-        setUsername('');
-        setComment('');
-    };
-
-    if (loading) {
-        return <div>Loading...</div>;
-    }
+    // if (loading) {
+    //     return <div>Loading...</div>;
+    // }
 
     return (
         <>
@@ -58,12 +60,12 @@ export default function GameDetails() {
                     {/* <!-- Bonus ( for Guests and Users ) --> */}
                     <div className="details-comments">
                         <h2>Comments:</h2>
-                        {/* {console.log(game)} */}
-                        {game.comments ?
+                        {comments != null
+                            ?
                             <ul>
-                                {Object.values(game.comments).map(comment => (
+                                {Object.values(comments).map(comment => (
                                     <li key={comment._id} className="comment">
-                                        <p>{comment.username}: {comment.text}</p>
+                                        <p>Username: {comment.text}</p>
                                     </li>
                                 ))}
                             </ul>
@@ -81,15 +83,22 @@ export default function GameDetails() {
 
                 {/* <!-- Bonus --> */}
                 {/* <!-- Add Comment ( Only for logged-in users, which is not creators of the current game ) --> */}
-                <article className="create-comment">
-                    <label>Add new comment:</label>
-                    <form className="form" onSubmit={commentSubmitHandler}>
-                        <input className="btn submit" type="text" placeholder="Pesho" name="username" onChange={(event) => setUsername(event.target.value)} value={username} />
-                        <textarea name="comment" placeholder="Comment......" onChange={(event) => setComment(event.target.value)} value={comment}></textarea>
-                        <input className="btn submit" type="submit" value="Add Comment" />
-                    </form>
-                </article>
+                {isAuthenticated && (
+                    <article className="create-comment">
+                        <label>Add new comment:</label>
+                        <form className="form" onSubmit={submitHandler}>
+
+                            <textarea name="comment"
+                                placeholder="Comment......"
+                                onChange={changeHandler}
+                                value={formValues.comment}
+                            ></textarea>
+                            <input className="btn submit" type="submit" value="Add Comment" />
+                        </form>
+                    </article>
+                )}
             </section>
         </>
     )
 }
+//{userName}

@@ -21,11 +21,12 @@ export function useOneGame(gameId){
 
     useEffect(() => {
         (async () => {
-            const gameOne = await getOneGame();
-            setGames(gameOne);
-            //console.log(gamesAll);
+            const gameOne = await getOneGame(gameId);
+            setGame(gameOne);
+            //console.log(gameOne);
         })();
     }, [gameId]);
+
 
     return [game, setGame];
 }
