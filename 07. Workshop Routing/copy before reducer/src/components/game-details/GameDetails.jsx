@@ -15,14 +15,9 @@ export default function GameDetails() {
 
     const { gameId } = useParams();
     const [game] = useOneGame(gameId);
-    //const [comments, setComments] = useGetAllComments(gameId);
-    const [comments, dispatchComments] = useGetAllComments(gameId);
+    const [comments, setComments] = useGetAllComments(gameId);
     const createComment = useCreateComment();
-    const { isAuthenticated, userId } = useAuthenticationContext();
-
-    const isOwner = userId == game._ownerId;
-    //console.log(gameId);
-    //console.log(game._ownerId);
+    const { isAuthenticated } = useAuthenticationContext();
 
     const {
         changeHandler,
@@ -32,17 +27,12 @@ export default function GameDetails() {
 
         try {
             const newComment = await createComment(gameId, comment);
-
-            // //with useState
-            // if (comments != undefined && comments != null) {
-            //     const commentId = `comment${Object.keys(comments).length + 1}`;
-            //     setComments({ ...comments, [commentId]: newComment });
-            // } else {
-            //     setComments({ ...comments, newComment });
-            // }
-
-            //with useReducer
-            dispatchComments({ type: 'addGameComments', payload: newComment })
+            if (comments != undefined && comments != null) {
+                const commentId = `comment${Object.keys(comments).length + 1}`;
+                setComments({ ...comments, [commentId]: newComment });
+            } else {
+                setComments({ ...comments, newComment });
+            }
         } catch (error) {
             console.log(error.message);
         }
@@ -51,8 +41,6 @@ export default function GameDetails() {
     // if (loading) {
     //     return <div>Loading...</div>;
     // }
-
-    //console.log(comments);
 
     return (
         <>
@@ -72,7 +60,7 @@ export default function GameDetails() {
                     {/* <!-- Bonus ( for Guests and Users ) --> */}
                     <div className="details-comments">
                         <h2>Comments:</h2>
-                        {Object.values(comments).length > 0
+                        {comments != null
                             ?
                             <ul>
                                 {Object.values(comments).map(comment => (
@@ -87,10 +75,10 @@ export default function GameDetails() {
                     </div>
 
                     {/* <!-- Edit/Delete buttons ( Only for creator of this game )  --> */}
-                    {isOwner && (<div className="buttons">
+                    <div className="buttons">
                         <a href="#" className="button">Edit</a>
                         <a href="#" className="button">Delete</a>
-                    </div>)}
+                    </div>
                 </div>
 
                 {/* <!-- Bonus --> */}

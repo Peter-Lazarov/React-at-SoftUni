@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { createComment, getAllComments } from "../services/comments-api";
 
 export function useCreateComment() {
@@ -11,16 +11,42 @@ export function useCreateComment() {
     return commentCreateHandler;
 }
 
+export function commentReducer(currentState, action) {
+    switch (action.type) {
+        case 'loadGameComments':
+            const payload = action.comments;
+
+            if (payload != undefined) {
+                return {
+                    ...currentState,
+                    ...payload
+                }
+            } else {
+                return currentState;
+            }
+        case 'addGameComments':
+            const comment = action.payload;
+            return {
+                ...currentState,
+                comment
+            }
+        default:
+            return currentState;
+    }
+}
+
 export function useGetAllComments(gameId) {
-    const [comments, setComments] = useState();
-        
+    //const [comments, setComments] = useState();
+    const [comments, dispatch] = useReducer(commentReducer, {});
+
     useEffect(() => {
         (async () => {
-            const result = await getAllComments(gameId);
-            //console.log(result);
-            setComments(result);
+            const gameComments = await getAllComments(gameId);
+            //console.log(gameComments);
+            //setComments(result);
+            dispatch({ type: 'loadGameComments', comments: gameComments });
         })()
     }, [gameId])
-    
-    return [comments, setComments];
+
+    return [comments, dispatch];
 }
